@@ -1,0 +1,82 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ees
+      POSTGRES_PASSWORD: ees
+      POSTGRES_DB: ees
+    volumes:
+      - ees_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ees -d ees"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  mcp-bridge:
+    build: ./mcp-bridge
+    ports:
+      - "8100:8100"
+      - "8000:8000"
+    environment:
+      BRIDGE_PORT: "8100"
+      BRIDGE_MAX_PARALLEL: ${BRIDGE_MAX_PARALLEL:-6}
+      MAX_SOURCE_CHARS: ${MAX_SOURCE_CHARS:-8000}
+      CACHE_DIR: /data/cache
+      EES_PICKLIST_SHEET_ID: ${EES_PICKLIST_SHEET_ID:-}
+    env_file:
+      - path: ${HOME}/.config/google-workspace-mcp/env
+        required: false
+    volumes:
+      - ${HOME}/.config/google-workspace-mcp:/root/.config/google-workspace-mcp
+      - bridge_cache:/data/cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgresql://ees:ees@db:5432/ees
+      PORT: "4000"
+      AI_GATEWAY_API_KEY: ${AI_GATEWAY_API_KEY:-}
+      MODEL_FAST: ${MODEL_FAST:-openai/gpt-4.1-mini}
+      MODEL_REASON: ${MODEL_REASON:-openai/gpt-4.1}
+      MODEL_WRITE: ${MODEL_WRITE:-openai/gpt-4.1-mini}
+      MODEL_EMBED: ${MODEL_EMBED:-openai/text-embedding-3-small}
+      EES_KB_FOLDER_ID: ${EES_KB_FOLDER_ID:-}
+      MCP_BRIDGE_URL: http://mcp-bridge:8100
+      EES_PICKLIST_SHEET_ID: ${EES_PICKLIST_SHEET_ID:-}
+      MAX_SOURCE_CHARS: ${MAX_SOURCE_CHARS:-8000}
+    depends_on:
+      db:
+        condition: service_healthy
+      mcp-bridge:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    depends_on:
+      backend:
+        condition: service_started
+
+volumes:
+  ees_pg:
+  bridge_cache:

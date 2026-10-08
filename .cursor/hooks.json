@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeMCPExecution": [
+      {
+        "command": ".cursor/hooks/gate-mcp-writes.py",
+        "timeout": 10,
+        "failClosed": true
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/gate-docker-destroy.py",
+        "timeout": 10,
+        "failClosed": false
+      }
+    ]
+  }
+}

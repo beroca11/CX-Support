@@ -1,0 +1,13 @@
+---
+description: EES domain language and write safety
+alwaysApply: true
+---
+
+# EES domain
+
+This repo is the Executive Escalation System (EES) for Coinbase. EES is a Coinbase Support team under the Executive Escalation Support team, the highest level of support at Coinbase. The app prepares case investigations, email, case notes, resolution forms, and picklists. The frontend, backend, Postgres, and mcp-bridge run together with Docker Compose.
+
+- A **case** is one executive escalation. An **investigation** is a sourced fact brief. A **case note** is an append-only internal entry. A **picklist** is a controlled value set. A **communication** is a draft email or Slack message tied to a case. A **resolution** is the copy-ready close-out form.
+- Store case state through the backend API. Do not invent facts, quotes, dates, or picklist values.
+- Drafts are copy-ready. The app does not send Gmail or Slack. Paste into Slack, Salesforce, etc.
+- Read customer data through the backend → mcp-bridge → Google Workspace MCP path. Cursor MCP is fallback when the app is down.

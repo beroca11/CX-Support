@@ -1,0 +1,14 @@
+---
+description: Python MCP bridge conventions
+globs: mcp-bridge/**/*.py
+alwaysApply: false
+---
+
+# MCP bridge
+
+- Read-only tools only (`search_*`, `get_*`, `read_*`). Never expose send/write tools.
+- Cache every call in SQLite with per-tool TTL. Prefer `/prefetch/case` over sequential `/call`.
+- Bound parallelism with `BRIDGE_MAX_PARALLEL`. Trim bodies to `MAX_SOURCE_CHARS`.
+- Never log message bodies, tokens, or OAuth secrets. Log tool name and case id only.
+- Pasted MCP settings live in `/data/cache/mcp-settings.json` mode `0600`. Do not return env values.
+- Preserve original ids so facts can cite `gmail:<id>` or `drive:<id>`.

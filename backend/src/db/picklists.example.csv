@@ -1,0 +1,20 @@
+list,value,active
+severity,Critical,TRUE
+severity,High,TRUE
+severity,Medium,TRUE
+status,New,TRUE
+status,Investigating,TRUE
+status,Pending Customer,TRUE
+status,Pending Internal,TRUE
+status,Resolved,TRUE
+status,Closed,TRUE
+caseType,Product,TRUE
+caseType,Billing,TRUE
+caseType,Security,TRUE
+caseType,Service,TRUE
+caseType,Other,TRUE
+intake,Exec,TRUE
+intake,Prosumer,TRUE
+intake,Jordan,TRUE
+intake,HBR,TRUE
+intake,Social Escalation,TRUE

@@ -1,0 +1,13 @@
+---
+description: EES case workspace UI conventions
+globs: frontend/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Frontend
+
+- Routes: `/` case list, `/cases/new` intake, `/cases/[id]` investigation/drafts/resolution/activity, `/picklists`, `/settings`.
+- One case screen shows status, severity, investigation, notes, drafts, and resolution. Save drafts through the API.
+- Copy controls paste into Slack/Salesforce. The app does not send Gmail or Slack.
+- Use the API base from `NEXT_PUBLIC_API_URL`. Show empty, loading, and error states for cases and picklists.
+- Meet 4.5:1 contrast, 44px targets, visible focus, and a label on every input.

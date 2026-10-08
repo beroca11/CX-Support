@@ -1,0 +1,18 @@
+---
+description: EES stack layout and run path
+alwaysApply: true
+---
+
+# EES stack
+
+```
+frontend/     Next.js App Router, TypeScript
+backend/      Hono, TypeScript, Postgres
+mcp-bridge/   Python FastAPI bridge to Google Workspace MCP
+docker-compose.yml
+```
+
+- `docker compose up --build` is the run path. App URL is http://localhost:3000. API URL is http://localhost:4000. Bridge URL is http://localhost:8100.
+- The backend owns all case writes. The frontend calls the API only. The browser never calls MCP servers.
+- Backend holds `AI_GATEWAY_API_KEY` and talks to `mcp-bridge`. Google OAuth stays in `~/.config/google-workspace-mcp/` — do not put Google, Slack, or other tokens in the app image, source, or compose file.
+- Copy `.env.example` to `.env`. Never commit `.env`.
